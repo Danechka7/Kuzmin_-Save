@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Kuzmin_ГлазкиSave"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="AddEditPage">
+      Title="AddEditPage" FontFamily="Century Gothic">
 
     <Grid>
         <TextBlock Text="Привет!!!" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30"></TextBlock>

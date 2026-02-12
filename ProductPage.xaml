@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Kuzmin_ГлазкиSave"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ProductPage">
+      Title="ProductPage" FontFamily="Century Gothic">
 
     <Grid>
         <Button Content="погнали" Height="30" Width="175" Background="#FFAF75EE" Click="Button_Click" ></Button>
