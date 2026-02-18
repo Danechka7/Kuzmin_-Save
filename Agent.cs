@@ -43,6 +43,7 @@ namespace Kuzmin_ГлазкиSave
                 foreach (ProductSale productSale in ProductSale)
                 {
                     TimeSpan differenceWithOutTime = DateTime.Today.Date - productSale.SaleDate.Date;
+                    if((int) differenceWithOutTime.TotalDays <=365)
                     sales += productSale.ProductCount;
                 }
                 return sales;

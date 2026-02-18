@@ -38,17 +38,45 @@ namespace Kuzmin_ГлазкиSave
             var currentAgents = context.Agent.ToList();
 
             // Поиск по тексту (в названии или телефоне)
+
             if (!string.IsNullOrWhiteSpace(TBoxSearch.Text))
             {
                 var searchText = TBoxSearch.Text.ToLower();
-                currentAgents = currentAgents.Where(a =>
-                    (a.Title != null && a.Title.ToLower().Contains(searchText)) ||
-                    (a.Phone != null && a.Phone.ToLower().Contains(searchText))
-                ).ToList();
-            }
 
+                var digitsOnlySearch = new string(searchText.Where(char.IsDigit).ToArray());
+
+                currentAgents = currentAgents.Where(a =>
+                {
+
+                    if (a.Title != null && a.Title.ToLower().Contains(searchText))
+                        return true;
+
+
+                    if (a.Email != null && a.Email.ToLower().Contains(searchText))
+                        return true;
+
+
+                    if (a.Phone != null)
+                    {
+
+                        if (a.Phone.ToLower().Contains(searchText))
+                            return true;
+
+
+                        if (!string.IsNullOrEmpty(digitsOnlySearch))
+                        {
+                            var cleanPhone = new string(a.Phone.Where(char.IsDigit).ToArray());
+
+                            if (cleanPhone.Contains(digitsOnlySearch))
+                                return true;
+                        }
+                    }
+
+                    return false;
+                }).ToList();
+            }
             // Фильтрация по типу агента (ComboType)
-            if (ComboType.SelectedIndex > 0) // 0 - "Все типы"
+            if (ComboType.SelectedIndex > 0)
             {
                 var selectedType = (ComboType.SelectedItem as TextBlock)?.Text;
                 if (!string.IsNullOrEmpty(selectedType))
@@ -60,10 +88,10 @@ namespace Kuzmin_ГлазкиSave
             // Сортировка (ComboSorting)
             switch (ComboSorting.SelectedIndex)
             {
-                case 1: // Наименование от А до Я
+                case 1: // от А до Я
                     currentAgents = currentAgents.OrderBy(a => a.Title).ToList();
                     break;
-                case 2: // Наименование от Я до А
+                case 2: // от Я до А
                     currentAgents = currentAgents.OrderByDescending(a => a.Title).ToList();
                     break;
                 case 3: // Скидка по возрастанию
@@ -78,7 +106,6 @@ namespace Kuzmin_ГлазкиSave
                 case 6: // Приоритет по убыванию
                     currentAgents = currentAgents.OrderByDescending(a => a.Priority).ToList();
                     break;
-                    // case 0 и default - без сортировки (оставляем как есть)
             }
 
             // Устанавливаем источник данных

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kuzmin_ГлазкиSave"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" FontFamily="Century Gothic" Icon="res/Глазки-save.ico">
+        Title="Глазки_Save" Height="450" Width="800" FontFamily="Century Gothic" Icon="res/Глазки-save.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="75"/>
