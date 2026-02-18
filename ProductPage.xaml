@@ -6,9 +6,84 @@
       xmlns:local="clr-namespace:Kuzmin_ГлазкиSave"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ProductPage" FontFamily="Century Gothic">
+      Title="Агенты" FontFamily="Century Gothic">
 
     <Grid>
-        <Button Content="погнали" Height="30" Width="175" Background="#FFAF75EE" Click="Button_Click" ></Button>
-    </Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <TextBox Name="TBoxSearch" TextChanged="TBoxSearch_TextChanged"     Width="250" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0"></TextBox>
+        <ComboBox Name="ComboSorting" SelectionChanged="ComboSorting_SelectionChanged" FontSize="20" Width="250" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">
+            <TextBlock>Сортировка</TextBlock>
+            <TextBlock>Наименование от А до Я</TextBlock>
+            <TextBlock>Наименование от Я до А</TextBlock>
+            <TextBlock>Скидка по возрастанию</TextBlock>
+            <TextBlock>Скидка по убыванию</TextBlock>
+            <TextBlock>Приоритет по возрастанию</TextBlock>
+            <TextBlock>Приоритет по убыванию</TextBlock>
+        </ComboBox>
+        <ComboBox Name="ComboType" SelectionChanged="ComboType_SelectionChanged" FontSize="20" Width="250" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">
+            <TextBlock>Все типы</TextBlock>
+            <TextBlock>МФО</TextBlock>
+            <TextBlock>ООО</TextBlock>
+            <TextBlock>ЗАО</TextBlock>
+            <TextBlock>МКК</TextBlock>
+            <TextBlock>ОАО</TextBlock>
+            <TextBlock>ПАО</TextBlock>
+        </ComboBox>
+        <ListView Name="AgentListView" Grid.ColumnSpan="3" Grid.Row="1" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="{Binding FontStyle}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"></ColumnDefinition>
+                            <ColumnDefinition Width="500"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Image Width="150" Grid.RowSpan="4" Grid.Column="0" Stretch="UniformToFill" HorizontalAlignment="Center">
+                            <Image.Source>
+                                <Binding Path="Logo">
+                                    <Binding.TargetNullValue>
+                                        <ImageSource>
+                                            res/picture.png
+                                        </ImageSource>
+                                    </Binding.TargetNullValue>
+                                </Binding>
+                            </Image.Source>
+                        </Image>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Text="{Binding AgentTypeName}" FontSize="20"></TextBlock>
+                            <TextBlock Text=" | " FontSize="20"></TextBlock>
+                            <TextBlock Text="{Binding Title}" FontSize="20"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Text="{Binding SalesForYear}" FontSize="15"></TextBlock>
+                            <TextBlock Text=" продаж за год" FontSize="15"></TextBlock>
+                        </StackPanel>
+                        <TextBlock Text="{Binding Phone}" FontSize="15" Grid.Row="2" Grid.Column="1"></TextBlock>
+                        <TextBlock Text="{Binding Priority, StringFormat=Приоритетность: {0}}" FontSize="15" Grid.Row="3" Grid.Column="1"></TextBlock>
+                        <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="4" Orientation="Horizontal" HorizontalAlignment="Center" >
+                            <TextBlock Text="{Binding Discount}" FontSize="20" ></TextBlock>
+                            <TextBlock Text="%" FontSize="20" ></TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+
+
+    </Grid> 
 </Page>

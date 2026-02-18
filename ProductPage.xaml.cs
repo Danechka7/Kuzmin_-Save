@@ -23,11 +23,81 @@ namespace Kuzmin_ГлазкиSave
         public ProductPage()
         {
             InitializeComponent();
+            var currentAgents = KuzminBD_ГлазкиSaveEntities.GetContext().Agent.ToList();
+            AgentListView.ItemsSource = currentAgents;
+            ComboType.SelectedIndex = 0;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             KuzminClass.MainFrame.Navigate(new AddEditPage());
+        }
+        private void UpdateAgents()
+        {
+            var context = KuzminBD_ГлазкиSaveEntities.GetContext();
+            var currentAgents = context.Agent.ToList();
+
+            // Поиск по тексту (в названии или телефоне)
+            if (!string.IsNullOrWhiteSpace(TBoxSearch.Text))
+            {
+                var searchText = TBoxSearch.Text.ToLower();
+                currentAgents = currentAgents.Where(a =>
+                    (a.Title != null && a.Title.ToLower().Contains(searchText)) ||
+                    (a.Phone != null && a.Phone.ToLower().Contains(searchText))
+                ).ToList();
+            }
+
+            // Фильтрация по типу агента (ComboType)
+            if (ComboType.SelectedIndex > 0) // 0 - "Все типы"
+            {
+                var selectedType = (ComboType.SelectedItem as TextBlock)?.Text;
+                if (!string.IsNullOrEmpty(selectedType))
+                {
+                    currentAgents = currentAgents.Where(a => a.AgentTypeName == selectedType).ToList();
+                }
+            }
+
+            // Сортировка (ComboSorting)
+            switch (ComboSorting.SelectedIndex)
+            {
+                case 1: // Наименование от А до Я
+                    currentAgents = currentAgents.OrderBy(a => a.Title).ToList();
+                    break;
+                case 2: // Наименование от Я до А
+                    currentAgents = currentAgents.OrderByDescending(a => a.Title).ToList();
+                    break;
+                case 3: // Скидка по возрастанию
+                    currentAgents = currentAgents.OrderBy(a => a.Discount).ToList();
+                    break;
+                case 4: // Скидка по убыванию
+                    currentAgents = currentAgents.OrderByDescending(a => a.Discount).ToList();
+                    break;
+                case 5: // Приоритет по возрастанию
+                    currentAgents = currentAgents.OrderBy(a => a.Priority).ToList();
+                    break;
+                case 6: // Приоритет по убыванию
+                    currentAgents = currentAgents.OrderByDescending(a => a.Priority).ToList();
+                    break;
+                    // case 0 и default - без сортировки (оставляем как есть)
+            }
+
+            // Устанавливаем источник данных
+            AgentListView.ItemsSource = currentAgents;
+        }
+
+        private void TBoxSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateAgents();
+        }
+
+        private void ComboType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateAgents();
+        }
+
+        private void ComboSorting_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateAgents();
         }
     }
 }
