@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kuzmin_ГлазкиSave"
         mc:Ignorable="d"
-        Title="Глазки_Save" Height="450" Width="800" FontFamily="Century Gothic" Icon="res/Глазки-save.ico">
+        Title="Глазки_Save" Height="700" Width="800" FontFamily="Century Gothic" Icon="res/Глазки-save.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="75"/>
@@ -16,6 +16,6 @@
         <TextBlock Text="Глазки-Save" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
         <Frame Grid.Row="1" Name ="MainFrame" ContentRendered="MainFrame_ContentRendered" NavigationUIVisibility="Hidden"></Frame>
         <Button Content="Назад" Name="BtnBack" Width="175" Height="30" HorizontalAlignment="Right" Margin="5" Click="Btn_Click"></Button>
-       
+        
     </Grid>
 </Window>
