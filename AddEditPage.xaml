@@ -5,10 +5,96 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Kuzmin_ГлазкиSave"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="600" d:DesignWidth="800"
       Title="AddEditPage" FontFamily="Century Gothic">
 
     <Grid>
-        <TextBlock Text="Привет!!!" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30"></TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="130"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="60"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <!-- Левая колонка -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+            <TextBlock Text="Наименование" FontSize="15" Height="30" Width="150" VerticalAlignment="Center"></TextBlock>
+            <TextBox Text="{Binding Title}" FontSize="15" Height="30" Width="250" Margin="5"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+            <TextBlock Text="Адрес" FontSize="15" Height="30" Width="150" VerticalAlignment="Center"></TextBlock>
+            <TextBox Text="{Binding Address}" FontSize="15" Height="30" Width="250" Margin="5"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+            <TextBlock Text="ФИО директора" FontSize="15" Height="30" Width="150" VerticalAlignment="Center"></TextBlock>
+            <TextBox Text="{Binding DirectorName}" FontSize="15" Height="30" Width="250" Margin="5"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
+            <TextBlock Text="Телефон" FontSize="15" Height="30" Width="150" VerticalAlignment="Center"></TextBlock>
+            <TextBox Text="{Binding Phone}" FontSize="15" Height="30" Width="250" Margin="5"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+            <TextBlock Text="Email" FontSize="15" Height="30" Width="150" VerticalAlignment="Center"></TextBlock>
+            <TextBox Text="{Binding Email}" FontSize="15" Height="30" Width="250" Margin="5"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal">
+            <TextBlock Text="Логотип" FontSize="15" Width="150" Height="30" VerticalAlignment="Center"></TextBlock>
+            <Border BorderBrush="Gray" BorderThickness="1" Width="100" Height="100" Margin="5">
+                <Image Name="LogoImage" Width="100" Height="100" Stretch="Uniform"
+           Source="{Binding Logo, TargetNullValue=/Res/picture.png, FallbackValue=/Res/picture.png}">
+                </Image>
+            </Border>
+            <Button Content="Изменить" Name="ChangePictureBtn" Click="ChangePictureBtn_Click" 
+                    Width="80" Height="30" Margin="5" VerticalAlignment="Center"></Button>
+        </StackPanel>
+
+        <!-- Правая колонка -->
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Text="Тип агента" FontSize="15" Width="150" Height="30" VerticalAlignment="Center"></TextBlock>
+            <ComboBox Width="250" Height="30" FontSize="15" Name="TypeComboBox" 
+                      DisplayMemberPath="Title" SelectedValuePath="ID"
+                      SelectedValue="{Binding AgentTypeID}" Margin="5"></ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Text="Приоритет" FontSize="15" Height="30" Width="150" VerticalAlignment="Center"></TextBlock>
+            <TextBox Text="{Binding Priority}" FontSize="15" Height="30" Width="250" Margin="5"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Text="ИНН" FontSize="15" Height="30" Width="150" VerticalAlignment="Center"></TextBlock>
+            <TextBox Text="{Binding INN}" FontSize="15" Height="30" Width="250"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Text="КПП" FontSize="15" Height="30" Width="150" VerticalAlignment="Center"></TextBlock>
+            <TextBox Text="{Binding KPP}" FontSize="15" Height="30" Width="250" Margin="5"></TextBox>
+        </StackPanel>
+        <StackPanel Grid.Row="9" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="Сохранить" Name="SaveButton" Click="SaveButton_Click" 
+                    Width="100" Height="35" Margin="5"></Button>
+        </StackPanel>
+
+        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10">
+            <Button Content="Удалить" Name="DeleteButton" Click="DeleteButton_Click" 
+                    Width="100" Height="35" Margin="5" ></Button>
+            <Button Content="Отмена" Name="CancelButton" Click="CancelButton_Click" 
+                    Width="100" Height="35" Margin="5"></Button>
+        </StackPanel>
     </Grid>
 </Page>
