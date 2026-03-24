@@ -41,7 +41,7 @@
                 <TextBlock>ПАО</TextBlock>
             </ComboBox>
 
-            <ListView Name="AgentListView" Grid.ColumnSpan="3" Grid.Row="1">
+        <ListView Name="AgentListView" Grid.ColumnSpan="3" Grid.Row="1" SelectionMode="Extended"  SelectionChanged="AgentListView_SelectionChanged">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid Background="{Binding FontStyle}">
@@ -101,5 +101,8 @@
                 <Button Content="Редактировать" Name="EditAgentBtn" Click="EditAgentBtn_Click" 
             Width="150" Height="35" Margin="5" />
             </StackPanel>
-        </Grid>
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Name="ChangePriorityBtn" Content="Изменить приоритет" Click="ChangePriority_Click" Width="200" Height="35" Margin="5" Visibility="Hidden"/>
+        </StackPanel>
+    </Grid>
 </Page>

@@ -15,6 +15,8 @@ namespace Kuzmin_ГлазкиSave
     public partial class AddEditPage : Page
     {
         private Agent _currentAgent;
+        private List<Product> _allProducts;
+        private List<ProductSale> _sales = new List<ProductSale>();
 
         public AddEditPage(Agent selectedAgent = null)
         {
@@ -25,7 +27,6 @@ namespace Kuzmin_ГлазкиSave
             {
                 _currentAgent = selectedAgent;
                 DeleteButton.Visibility = Visibility.Visible;
-                // Устанавливаем выбранный тип агента
                 if (TypeComboBox.ItemsSource != null)
                     TypeComboBox.SelectedValue = _currentAgent.AgentTypeID;
             }
@@ -37,6 +38,15 @@ namespace Kuzmin_ГлазкиSave
 
             DataContext = _currentAgent;
             this.Unloaded += AddEditPage_Unloaded;
+            _allProducts = KuzminBD_ГлазкиSaveEntities.GetContext().Product.ToList();
+            ProductComboBox.ItemsSource = _allProducts;
+
+            if (_currentAgent.ID != 0)
+            {
+                _sales = _currentAgent.ProductSale.ToList();
+            }
+            SalesListView.ItemsSource = _sales;
+            SaleDatePicker.SelectedDate = DateTime.Today;
         }
 
         private void LoadAgentTypes()
@@ -103,11 +113,15 @@ namespace Kuzmin_ГлазкиSave
 
                 if (_currentAgent.ID == 0)
                     context.Agent.Add(_currentAgent);
-
+                foreach (var sale in _currentAgent.ProductSale)
+                {
+                    if (sale.ID == 0)
+                    {
+                        context.ProductSale.Add(sale);
+                    }
+                }
                 context.SaveChanges();
                 MessageBox.Show("Информация сохранена");
-
-                // Вместо сложной логики - просто перезапускаем страницу списка
                 NavigationService.Navigate(new ProductPage());
             }
             catch (Exception ex)
@@ -143,14 +157,11 @@ namespace Kuzmin_ГлазкиSave
             {
                 var context = KuzminBD_ГлазкиSaveEntities.GetContext();
 
-                // Проверка контекста
                 if (context == null)
                 {
                     MessageBox.Show("Ошибка подключения к базе данных");
                     return;
                 }
-
-                // Проверка существования агента в БД
                 var agentInDb = context.Agent.FirstOrDefault(a => a.ID == _currentAgent.ID);
                 if (agentInDb == null)
                 {
@@ -158,7 +169,6 @@ namespace Kuzmin_ГлазкиSave
                     return;
                 }
 
-                // ПРОВЕРКА НА НАЛИЧИЕ ПРОДАЖ
                 bool hasSales = context.ProductSale.Any(ps => ps.AgentID == _currentAgent.ID);
 
                 if (hasSales)
@@ -170,7 +180,6 @@ namespace Kuzmin_ГлазкиSave
 
                 if (MessageBox.Show("Вы точно хотите выполнить удаление?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    // Удаляем связанные данные
                     var history = context.AgentPriorityHistory.Where(aph => aph.AgentID == _currentAgent.ID).ToList();
                     if (history.Any())
                         context.AgentPriorityHistory.RemoveRange(history);
@@ -216,17 +225,13 @@ namespace Kuzmin_ГлазкиSave
             {
                 try
                 {
-                    // Создаем папку agents, если её нет
                     Directory.CreateDirectory(agentsFolder);
 
                     string selectedFile = dialog.FileName;
                     string fileName = Path.GetFileName(selectedFile);
                     string destPath = Path.Combine(agentsFolder, fileName);
-
-                    // Если файл не из папки agents - копируем
                     if (!Path.GetDirectoryName(selectedFile).Equals(agentsFolder, StringComparison.OrdinalIgnoreCase))
                     {
-                        // Проверяем дубликаты
                         int i = 1;
                         while (File.Exists(destPath))
                         {
@@ -257,6 +262,83 @@ namespace Kuzmin_ГлазкиSave
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             KuzminClass.MainFrame.GoBack();
+        }
+        private void AddSaleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProductComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Выберите продукт", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (!int.TryParse(CountTextBox.Text, out int count) || count <= 0)
+            {
+                MessageBox.Show("Введите положительное целое число", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (SaleDatePicker.SelectedDate == null)
+            {
+                MessageBox.Show("Выберите дату продажи", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            Product selectedProduct = (Product)ProductComboBox.SelectedItem;
+
+            var newSale = new ProductSale
+            {
+                ProductID = selectedProduct.ID,
+                ProductCount = count,
+                SaleDate = SaleDatePicker.SelectedDate.Value,
+                Product = selectedProduct
+            };
+
+            if (_currentAgent.ProductSale == null)
+                _currentAgent.ProductSale = new List<ProductSale>();
+
+            _currentAgent.ProductSale.Add(newSale);
+            _sales.Add(newSale);
+            SalesListView.Items.Refresh();
+
+            CountTextBox.Text = "";
+            SaleDatePicker.SelectedDate = DateTime.Today;
+            ProductComboBox.SelectedItem = null;
+        }
+
+        private void DeleteSaleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Button btn = (Button)sender;
+            ProductSale sale = btn.Tag as ProductSale;
+            if (sale != null)
+            {
+                var context = KuzminBD_ГлазкиSaveEntities.GetContext();
+                if (sale.ID != 0)
+                {
+                    var saleToRemove = context.ProductSale.Find(sale.ID);
+                    if (saleToRemove != null)
+                    {
+                        context.ProductSale.Remove(saleToRemove);
+                    }
+                }
+
+                _currentAgent.ProductSale.Remove(sale);
+                _sales.Remove(sale);
+
+                SalesListView.Items.Refresh();
+
+                try
+                {
+                    context.SaveChanges();
+                    MessageBox.Show("Продажа удалена", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void Number_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+
         }
     }
 }

@@ -3,8 +3,10 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Media;
+using System.Windows.Input;
+using System.Windows.Media;
     using System.Windows.Navigation;
+using Kuzmin_ГлазкиSave;
 
     namespace Kuzmin_ГлазкиSave
     {
@@ -72,8 +74,6 @@
             {
                 LoadData();
                 var currentAgents = _allAgents.ToList();
-
-                // Поиск
                 if (!string.IsNullOrWhiteSpace(TBoxSearch.Text))
                 {
                     var searchText = TBoxSearch.Text.ToLower();
@@ -99,16 +99,12 @@
                         return false;
                     }).ToList();
                 }
-
-                // Фильтр по типу
                 if (ComboType.SelectedIndex > 0)
                 {
                     var selectedType = (ComboType.SelectedItem as TextBlock)?.Text;
                     if (!string.IsNullOrEmpty(selectedType))
                         currentAgents = currentAgents.Where(a => a.AgentTypeName == selectedType).ToList();
                 }
-
-                // Сортировка
                 switch (ComboSorting.SelectedIndex)
                 {
                     case 1: currentAgents = currentAgents.OrderBy(a => a.Title).ToList(); break;
@@ -139,5 +135,56 @@
                 LoadData();
                 UpdateAgents();
             }
+            private void Number_PreviewTextInput(object sender, TextCompositionEventArgs e)
+            {
+            e.Handled = !char.IsDigit(e.Text, 0);
+            }
+
+        private void ChangePriority_Click(object sender, RoutedEventArgs e)
+        {
+            if (AgentListView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Выберите хотя бы одного агента", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            int maxPriority = 0;
+            foreach (Agent agent in AgentListView.SelectedItems)
+            {
+                if (agent.Priority > maxPriority)
+                    maxPriority = agent.Priority;
+            }
+
+            PriorChange priorWindow = new PriorChange(maxPriority);
+            priorWindow.ShowDialog();
+
+            if (int.TryParse(priorWindow.TBPriority.Text, out int newPriority))
+            {
+                var context = KuzminBD_ГлазкиSaveEntities.GetContext();
+
+                foreach (Agent agent in AgentListView.SelectedItems)
+                {
+                    agent.Priority = newPriority;
+                }
+
+                context.SaveChanges();
+
+                LoadData();
+                UpdateAgents();
+
+                AgentListView.SelectedItems.Clear();
+                ChangePriorityBtn.Visibility = Visibility.Hidden;
+
+                MessageBox.Show($"Приоритет изменён",
+                                "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
+        private void AgentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (AgentListView.SelectedItems.Count > 0)
+                ChangePriorityBtn.Visibility = Visibility.Visible;
+            else
+                ChangePriorityBtn.Visibility = Visibility.Hidden;
+        }
+    }
     }
